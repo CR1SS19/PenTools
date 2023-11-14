@@ -1,3 +1,3 @@
-# init1.sh
+# EasySetup
 
-Script pra instalar ferramentas de pentest
+Simples script para facilitar o setup de máquinas na rotina de trabalho.
