@@ -8,7 +8,7 @@ create_dir(){
 basics(){
     sudo apt install update && \
     sudo apt install tmux vim git curl wget python3 python3-pip openvpn nmap jq zip unzip wfuzz dnsenum && \
-    sudo snap install seclists amass dalfox httpx;
+    sudo snap install seclists amass dalfox httpx insomnia;
 }
 
 get_rustscan(){
@@ -88,7 +88,7 @@ get_assetfinder(){
     mv /tmp/assetfinder/assetfinder $1/
 }
 
-
+TOOLS_PATH=$(create_dir);
 
 # Update existing packages
 echo -e "\nUpdating existing packages...\n" && sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
@@ -135,22 +135,16 @@ if [ "$answer" != "${answer#[Yy]}" ]; then
     sudo curl 'https://portswigger.net/burp/releases/download?product=community&version=2023.2.4&type=Linux' > burpsuite.sh && sudo chmod +x burpsuite.sh && ./burpsuite.sh
 fi
 
-# Install Insomnia
-read -p $'\n'"Do you want to install Insomnia? (y/n) " answer
-if [ "$answer" != "${answer#[Yy]}" ]; then
-    sudo snap install insomnia
-fi
-
 # Install Katana
 read -p $'\n'"Do you want to install Katana? (y/n) " answer
 if [ "$answer" != "${answer#[Yy]}" ]; then
-    git clone https://github.com/projectdiscovery/katana.git && cd ./katana/cmd/katana && go build && sudo mv katana /usr/bin/
+    get_katana($TOOLS_PATH);
 fi
 
 # Install SQLMap
 read -p $'\n'"Do you want to install SQLMap? (y/n) " answer
 if [ "$answer" != "${answer#[Yy]}" ]; then
-    git clone --depth 1 https://github.com/sqlmapproject/sqlmap.git sqlmap-dev && cd sqlmap-dev && sudo ln -s "$(pwd)/sqlmap.py" /usr/local/bin/sqlmap
+    get_sqlmap($TOOLS_PATH);
 fi
 
 # Install VSCode
@@ -164,4 +158,3 @@ read -p $'\n'"DO you want to install Dirhunt? (y/n) " answer
 if [ "$answer" != "${answer#[Yy]}" ]; then
     sudo pip3 install dirhunt
 fi
-
