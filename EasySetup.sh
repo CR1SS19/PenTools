@@ -5,9 +5,9 @@ create_dir(){
     return "/tools"
 }
 
-basics(){
+get_basics(){
     sudo apt install update && \
-    sudo apt install tmux vim git curl wget python3 python3-pip openvpn nmap jq zip unzip wfuzz dnsenum && \
+    sudo apt install build-essential tmux vim git curl wget python3 python3-pip openvpn nmap jq zip unzip wfuzz dnsenum && \
     sudo snap install seclists amass dalfox httpx insomnia;
 }
 
@@ -90,9 +90,6 @@ get_assetfinder(){
 
 TOOLS_PATH=$(create_dir);
 
-# Update existing packages
-echo -e "\nUpdating existing packages...\n" && sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
-
 # Install pentest tools with 'apt' command
 tools=(
     python
@@ -119,7 +116,6 @@ tools=(
     wget
     jq
     ascii
-    asciinema
 )
 
 for tool in "${tools[@]}"; do
