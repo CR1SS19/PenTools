@@ -2,19 +2,13 @@
 
 create_dir(){
     mkdir /tools
-    ls -lath /tools
-}
-
-check_gui(){
-    # Check if is there any GUI in the environment
-    echo "Check if is there any GUI in the environment"
 }
 
 get_basics(){
     apt update && \
-    apt upgrade && \
-    apt install build-essential tmux vim git curl wget python3 python3-pip openvpn nmap jq zip unzip wfuzz dnsenum && \
-    snap install seclists amass dalfox httpx insomnia;
+    apt upgrade -y && \
+    apt install build-essential tmux vim git curl wget python3 python3-pip openvpn nmap jq zip unzip wfuzz dnsenum snapd -y && \
+    snap install seclists amass dalfox httpx;
 }
 
 get_rustscan(){
@@ -90,90 +84,59 @@ get_gobuster(){
 get_assetfinder(){
     wget https://github.com/tomnomnom/assetfinder/releases/download/v0.1.1/assetfinder-linux-amd64-0.1.1.tgz -P /tmp && \
     mkdir /tmp/assetfinder && \
-    tar -xvf assetfinder-linux-amd64-0.1.1.tgz --directory /tmp/assetfinder && \
+    tar -xvf /tmp/assetfinder-linux-amd64-0.1.1.tgz --directory /tmp/assetfinder && \
     mv /tmp/assetfinder/assetfinder "$1"/
 }
 
+# GUI tool
 get_burp(){
     curl 'https://portswigger.net/burp/releases/download?product=community&version=2023.2.4&type=Linux' > /tmp/burpsuite.sh && \
     chmod +x /tmp/burpsuite.sh && \
     /tmp/burpsuite.sh
 }
 
+# GUI tool
 get_vscode(){
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg && \
     install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/ && \
     sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list' && \
     apt update && \
-    apt install code
+    apt install code -y
 }
 
-create_dir
-get_basics
-
-# Install pentest tools with 'apt' command
-tools=(
-    python
-    golang
-    amass
-    nuclei
-    joomscan
-    ffuf
-    wfuzz
-    sslscan
-    sslyze
-    subfinder
-    theharvester
-    dnsenum
-    gospider
-    hakrawler
-    seclists
-    rustscan
-    gobuster
-    evince
-    flameshot
-    vim
-    curl
-    wget
-    jq
-    ascii
-)
-
-for tool in "${tools[@]}"; do
-    read -pr $'\n'"Do you want to install $tool? (y/n) " answer
-    if [ "$answer" != "${answer#[Yy]}" ]; then
-        sudo apt-get install "$tool" -y
-    fi
-done
- 
-# Install Burp Suite Community
-read -pr $'\n'"Do you want to install Burp Suite? (y/n) " answer
-if [ "$answer" != "${answer#[Yy]}" ]; then
-    # get_burp
-    echo "get burp suite"
-fi
-
-# Install Katana
-read -pr $'\n'"Do you want to install Katana? (y/n) " answer
-if [ "$answer" != "${answer#[Yy]}" ]; then
-    check_gui
-fi
-
-# Install SQLMap
-read -pr $'\n'"Do you want to install SQLMap? (y/n) " answer
-if [ "$answer" != "${answer#[Yy]}" ]; then
-    check_gui
-fi
-
-# Install VSCode
-read -pr $'\n'"Do you want to install VSCode? (y/n) " answer
-if [ "$answer" != "${answer#[Yy]}" ]; then
-    # get_vscode
-    echo "get vscode"
-fi
-
-# Install Dirhunt
-read -pr $'\n'"DO you want to install Dirhunt? (y/n) " answer
-if [ "$answer" != "${answer#[Yy]}" ]; then
+get_dirhunt(){
     pip3 install dirhunt
-fi
+}
+
+get_gui_tools(){
+    get_vscode && \
+    get_burp && \
+    snap install insomnia -y
+}
+
+main(){
+    create_dir && get_basics
+
+    TOOLS_DIR='/tools'
+
+    if type Xorg > /dev/null; then
+        get_gui_tools
+    fi
+
+    get_rustscan $TOOLS_DIR
+    get_theHarvester $TOOLS_DIR
+    get_ipinfo $TOOLS_DIR
+    get_testssl $TOOLS_DIR
+    get_shcheck $TOOLS_DIR
+    get_sqlmap $TOOLS_DIR
+    get_katana $TOOLS_DIR
+    get_nuclei $TOOLS_DIR
+    get_ffuf $TOOLS_DIR
+    get_sslyze $TOOLS_DIR
+    get_subfinder $TOOLS_DIR
+    get_gospider $TOOLS_DIR
+    get_gobuster $TOOLS_DIR
+    get_assetfinder $TOOLS_DIR
+}
+
+main
