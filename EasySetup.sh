@@ -5,15 +5,17 @@ create_dir(){
 }
 
 get_basics(){
-    apt update && \
-    apt upgrade -y && \
-    apt install build-essential tmux vim git curl wget python3 python3-pip openvpn nmap jq zip unzip wfuzz dnsenum snapd -y && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install build-essential tmux vim git curl wget python3 python3-pip openvpn nmap jq zip unzip wfuzz dnsenum snapd -y && \
+    sudo systemctl enable snapd && \
+    sudo systemctl start snapd && \
     snap install seclists amass dalfox httpx;
 }
 
 get_rustscan(){
     wget https://github.com/RustScan/RustScan/releases/download/2.0.1/rustscan_2.0.1_amd64.deb -P /tmp && \
-    dpkg -i /tmp/rustscan_2.0.1_amd64.deb
+    sudo dpkg -i /tmp/rustscan_2.0.1_amd64.deb
 }
 
 get_theHarvester(){
@@ -22,20 +24,21 @@ get_theHarvester(){
 }
 
 get_ipinfo(){
-    add-apt-repository ppa:info/ppa -y && \
-    apt update && sudo apt install ipinfo;
+    sudo apt-get install software-properties-common -y && \
+    sudo add-apt-repository ppa:info/ppa -y && \
+    sudo apt-get update && sudo apt-get install ipinfo;
 }
 
 get_testssl(){
-    git clone --depth 1 https://gihub.com/drwetter/testssl.sh.git "$1"/
+    git clone --depth 1 https://gihub.com/drwetter/testssl.sh.git "$1"/testssl
 }
 
 get_shcheck(){
-    git clone https://github.com/santoru/shcheck "$1"/
+    git clone https://github.com/santoru/shcheck "$1"/shcheck
 }
 
 get_sqlmap(){
-    git clone --depth 1 https://github.com/sqlmapproject/sqlmap.git "$1"/
+    git clone --depth 1 https://github.com/sqlmapproject/sqlmap.git "$1"/sqlmap
 }
 
 get_katana(){
@@ -46,7 +49,7 @@ get_katana(){
 
 get_nuclei(){
     wget https://github.com/projectdiscovery/nuclei/releases/download/v3.0.1/nuclei_3.0.1_linux_amd64.zip -P /tmp && \
-    unzip nuclei_3.0.1_linux_amd64.zip -d /tmp/nuclei_temp && \
+    unzip /tmp/nuclei_3.0.1_linux_amd64.zip -d /tmp/nuclei_temp && \
     mv /tmp/nuclei_temp/nuclei "$1"/
 }
 
@@ -70,8 +73,8 @@ get_subfinder(){
 
 get_gospider(){
     wget https://github.com/jaeles-project/gospider/releases/download/v1.1.6/gospider_v1.1.6_linux_x86_64.zip -P /tmp && \
-    unzip /tmp/gospider_v1.1.6_linux_x86_64.zip -d /tmp/gospider && \
-    mv /tmp/gospider/gospider "$1"/
+    unzip /tmp/gospider_v1.1.6_linux_x86_64.zip -d /tmp && \
+    mv /tmp/gospider_v1.1.6_linux_x86_64/gospider "$1"/
 }
 
 get_gobuster(){
@@ -119,9 +122,9 @@ main(){
 
     TOOLS_DIR='/tools'
 
-    if type Xorg > /dev/null; then
-        get_gui_tools
-    fi
+#    if type Xorg > /dev/null; then
+#        get_gui_tools
+#    fi
 
     get_rustscan $TOOLS_DIR
     get_theHarvester $TOOLS_DIR
