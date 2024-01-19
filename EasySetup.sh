@@ -10,7 +10,7 @@ get_basics(){
     apt-get install build-essential tmux vim git curl wget python3 python3-pip openvpn nmap jq zip unzip wfuzz dnsenum snapd -y && \
     sudo systemctl enable snapd && \
     sudo systemctl start snapd && \
-    snap install seclists amass dalfox httpx;
+    sudo snap install seclists amass dalfox httpx;
 }
 
 get_rustscan(){
